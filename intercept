@@ -1,0 +1,20 @@
+describe('Scenario verifikasi fungsi login', () => {
+    it('TC001 - Login dengan username dan pasword valid', () => {
+      cy.visit('https://www.saucedemo.com/v1/index.html');
+
+      //Isi username dan pasword
+      cy.get('input[name="user-name"]').type('standard_user');
+      cy.get('input[name="password"]').type('secret_sauce');
+
+      //intercept permintaan login
+      cy.intercept('GET', 'https://www.saucedemo.com/v1/inventory.html').as('testinglogin');
+
+      //action login
+      cy.get('input[type=submit]').click();
+
+      cy.wait('@testinglogin').its('response.statusCode').should('eq', 200);
+
+      //Assertion sudah login
+      cy.url().should('include', 'inventory');
+    })
+  })
